@@ -4,6 +4,7 @@
 <!-- Organization Logo -->
 <div align="center" style="display: flex; align-items: center; justify-content: center; gap: 16px;">
   <img alt="AOSSIE" src="public/aossie-logo.svg" width="175">
+  <img alt="Skills Ecosystem" src="public/skills-logo.svg" width="175" />
   <img alt="Stability Nexus" src="public/stability.svg" width="175" />
 </div>
 

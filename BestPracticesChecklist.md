@@ -152,8 +152,8 @@
 - [x] 🔴 **test_policy** — The project has a general policy that new functionality must include tests in the automated test suite.
   - *Evidence (CONTRIBUTING reference or informal policy):* https://github.com/AOSSIE-Org/Skills/blob/main/CONTRIBUTING.md#pull-request-guidelines
 
-- [x] 🔴 **tests_are_added** — Evidence exists that the test policy has been followed in recent major changes (e.g., PRs include tests).
-  - *Evidence URL (recent PR with tests):* https://github.com/AOSSIE-Org/Skills/blob/main/CONTRIBUTING.md#pull-request-guidelines
+- [~] 🔴 **tests_are_added** — Evidence exists that the test policy has been followed in recent major changes (e.g., PRs include tests).
+  - *Justification:* Skills is a governance/skill-definition repository (Markdown/YAML/JSON); changes are validated via pre-commit checks and manual review rather than an automated test suite, so this criterion does not apply.
 
 - [x] 🔵 **tests_documented_added** — The test policy is documented in contribution instructions. *(SUGGESTED)*
   - *Evidence URL:* https://github.com/AOSSIE-Org/Skills/blob/main/CONTRIBUTING.md#pull-request-guidelines

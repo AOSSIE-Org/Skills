@@ -15,9 +15,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -36,21 +36,15 @@ jobs:
               "## 🔬 Analysis":       "analysis",
           }
 
-          CATEGORY_TOTALS = {
-              "basics": 8,
-              "change_control": 6,
-              "reporting": 8,
-              "quality": 11,
-              "security": 9,
-              "analysis": 7,
-          }
+          categories = list(CATEGORY_HEADERS.values())
 
           with open("BestPracticesChecklist.md") as f:
               content = f.read()
 
           lines = content.splitlines()
           current_cat = None
-          counts = {k: 0 for k in CATEGORY_TOTALS}
+          counts = {k: 0 for k in categories}
+          totals = {k: 0 for k in categories}
 
           for line in lines:
               stripped = line.strip()
@@ -58,12 +52,15 @@ jobs:
                   if stripped == header:
                       current_cat = cat
                       break
-              # [x] = Met, [~] = N/A (counts as met)
-              if current_cat and re.match(r'- \[[xX~]\]', stripped):
-                  counts[current_cat] += 1
+              match = re.match(r'- \[([ xX~])\]', stripped)
+              if current_cat and match:
+                  totals[current_cat] += 1
+                  # [x]/[X] = Met, [~] = N/A (counts as met), [ ] = Unmet
+                  if match.group(1) in "xX~":
+                      counts[current_cat] += 1
 
           total_met = sum(counts.values())
-          total = sum(CATEGORY_TOTALS.values())
+          total = sum(totals.values())
           percent = round((total_met / total) * 100) if total > 0 else 0
 
           if percent >= 80:
@@ -86,8 +83,8 @@ jobs:
               "percent": percent,
               "color": color,
               "categories": {
-                  cat: {"met": counts[cat], "total": CATEGORY_TOTALS[cat]}
-                  for cat in CATEGORY_TOTALS
+                  cat: {"met": counts[cat], "total": totals[cat]}
+                  for cat in categories
               }
           }
 

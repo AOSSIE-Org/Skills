@@ -14,6 +14,7 @@
 <div align="center">
 
 [![Static Badge](https://img.shields.io/badge/aossie.org/Skills--Ecosystem-228B22?style=for-the-badge&labelColor=FFC517)](https://kpj2006.github.io/InteractiveSimulation/)
+[![Best Practices](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/AOSSIE-Org/Skills/main/checklist-status.json)](./BestPracticesChecklist.md)
 
 </div>
 

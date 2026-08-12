@@ -141,11 +141,11 @@
 
 ### Automated Testing
 
-- [x] 🔵 **test_invocation** — The test suite can be invoked in a standard way for the language (e.g., `npm test`, `pytest`, `cargo test`). *(SUGGESTED)*
-  - *Evidence URL:* https://github.com/AOSSIE-Org/Skills/blob/main/CONTRIBUTING.md#development-workflow
+- [~] 🔵 **test_invocation** — The test suite can be invoked in a standard way for the language (e.g., `npm test`, `pytest`, `cargo test`). *(SUGGESTED)*
+  - *Justification:* Skills is a governance/skill-definition repository (Markdown/YAML/JSON); there is no automated test suite to invoke, so this criterion does not apply.
 
-- [x] 🔵 **test_most** — The test suite covers most code branches, input fields, and functionality. *(SUGGESTED)*
-  - *Estimated coverage %:* ~80% (covers skill definitions, schema validation, and pre-commit checks).
+- [~] 🔵 **test_most** — The test suite covers most code branches, input fields, and functionality. *(SUGGESTED)*
+  - *Justification:* No automated test suite exists for this repository; validation is performed via pre-commit hooks and manual review instead.
 
 ### New Functionality Testing Policy
 

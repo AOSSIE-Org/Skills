@@ -1,0 +1,152 @@
+name: Best Practices
+
+on:
+  push:
+    paths:
+      - 'BestPracticesChecklist.md'
+  schedule:
+    - cron: '0 9 * * 1' # Every Monday 9am UTC (for criteria sync)
+  workflow_dispatch:
+
+jobs:
+
+  # Runs when BestPracticesChecklist.md changes
+  update-score:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Parse checklist and compute score
+        run: |
+          python3 << 'EOF'
+          import json, re
+          from datetime import date
+
+          CATEGORY_HEADERS = {
+              "## 🏗️ Basics":        "basics",
+              "## 🔄 Change Control": "change_control",
+              "## 🐛 Reporting":      "reporting",
+              "## ✅ Quality":        "quality",
+              "## 🔐 Security":       "security",
+              "## 🔬 Analysis":       "analysis",
+          }
+
+          CATEGORY_TOTALS = {
+              "basics": 8,
+              "change_control": 6,
+              "reporting": 8,
+              "quality": 11,
+              "security": 9,
+              "analysis": 7,
+          }
+
+          with open("BestPracticesChecklist.md") as f:
+              content = f.read()
+
+          lines = content.splitlines()
+          current_cat = None
+          counts = {k: 0 for k in CATEGORY_TOTALS}
+
+          for line in lines:
+              stripped = line.strip()
+              for header, cat in CATEGORY_HEADERS.items():
+                  if stripped == header:
+                      current_cat = cat
+                      break
+              # [x] = Met, [~] = N/A (counts as met)
+              if current_cat and re.match(r'- \[[xX~]\]', stripped):
+                  counts[current_cat] += 1
+
+          total_met = sum(counts.values())
+          total = sum(CATEGORY_TOTALS.values())
+          percent = round((total_met / total) * 100) if total > 0 else 0
+
+          if percent >= 80:
+              color = "brightgreen"
+          elif percent >= 60:
+              color = "yellow"
+          elif percent >= 40:
+              color = "orange"
+          else:
+              color = "red"
+
+          status = {
+              "schemaVersion": 1,
+              "label": "Best Practices",
+              "message": f"{percent}%",
+              "schema": "aossie-best-practices-v1",
+              "updated": str(date.today()),
+              "met": total_met,
+              "total": total,
+              "percent": percent,
+              "color": color,
+              "categories": {
+                  cat: {"met": counts[cat], "total": CATEGORY_TOTALS[cat]}
+                  for cat in CATEGORY_TOTALS
+              }
+          }
+
+          with open("checklist-status.json", "w") as f:
+              json.dump(status, f, indent=2)
+
+          print(f"Score: {total_met}/{total} ({percent}%)")
+          EOF
+
+      - name: Update score table in checklist
+        run: |
+          python3 << 'EOF'
+          import json, re
+
+          with open("checklist-status.json") as f:
+              s = json.load(f)
+
+          def emoji(met, total):
+              pct = met / total * 100 if total else 0
+              return "✅" if pct == 100 else ("🟡" if pct >= 50 else "🔴")
+
+          c = s["categories"]
+          table = f"""| Category           | Met | Total | Status |
+          |--------------------|-----|-------|--------|
+          | Basics             | {c['basics']['met']}   | {c['basics']['total']}     | {emoji(c['basics']['met'], c['basics']['total'])}     |
+          | Change Control     | {c['change_control']['met']}   | {c['change_control']['total']}     | {emoji(c['change_control']['met'], c['change_control']['total'])}     |
+          | Reporting          | {c['reporting']['met']}   | {c['reporting']['total']}     | {emoji(c['reporting']['met'], c['reporting']['total'])}     |
+          | Quality            | {c['quality']['met']}   | {c['quality']['total']}     | {emoji(c['quality']['met'], c['quality']['total'])}     |
+          | Security           | {c['security']['met']}   | {c['security']['total']}     | {emoji(c['security']['met'], c['security']['total'])}     |
+          | Analysis           | {c['analysis']['met']}   | {c['analysis']['total']}     | {emoji(c['analysis']['met'], c['analysis']['total'])}     |
+          | **Total**          | **{s['met']}** | **{s['total']}** | **{s['percent']}%** |"""
+
+          with open("BestPracticesChecklist.md") as f:
+              content = f.read()
+
+          marker = "<!-- Auto-updated by checklist-score.yml workflow — do not edit manually -->"
+          if marker not in content:
+              print("⚠️ Warning: Auto-update marker not found in BestPracticesChecklist.md")
+
+          new_content = re.sub(
+              r'(?<=<!-- Auto-updated by checklist-score\.yml workflow — do not edit manually -->\n).*?(?=\n---)',
+              table.strip(),
+              content,
+              flags=re.DOTALL
+          )
+
+          if new_content == content:
+              print("⚠️ Warning: Table was not updated - check marker format")
+
+          with open("BestPracticesChecklist.md", "w") as f:
+              f.write(new_content)
+          EOF
+
+      - name: Commit updated files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add checklist-status.json BestPracticesChecklist.md
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: update best practices score [skip ci]"
+            git push
+          fi

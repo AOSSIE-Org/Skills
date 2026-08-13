@@ -23,10 +23,10 @@
     </div>
 
     <div class="app-container">
-        <!-- SVG Canvas for animated flow lines -->
+        <!-- SVG Canvas for animated flow lines. Only 4 edges exist in the real
+             codebase: repo->bot, core->bot, repo->dash, bot->updater. -->
         <svg class="connections-canvas" id="connections-canvas">
             <defs>
-                <!-- Gradients for connection paths -->
                 <linearGradient id="grad-repo-bot" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stop-color="#3B82F6" />
                     <stop offset="100%" stop-color="#8B5CF6" />
@@ -39,28 +39,11 @@
                     <stop offset="0%" stop-color="#3B82F6" />
                     <stop offset="100%" stop-color="#06B6D4" />
                 </linearGradient>
-                <linearGradient id="grad-core-dash" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#10B981" />
-                    <stop offset="100%" stop-color="#06B6D4" />
-                </linearGradient>
                 <linearGradient id="grad-bot-updater" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stop-color="#8B5CF6" />
                     <stop offset="100%" stop-color="#F59E0B" />
                 </linearGradient>
-                <linearGradient id="grad-dash-updater" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#06B6D4" />
-                    <stop offset="100%" stop-color="#F59E0B" />
-                </linearGradient>
-                <linearGradient id="grad-updater-repo" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#F59E0B" />
-                    <stop offset="100%" stop-color="#3B82F6" />
-                </linearGradient>
-                <linearGradient id="grad-updater-core" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#F59E0B" />
-                    <stop offset="100%" stop-color="#10B981" />
-                </linearGradient>
-                
-                <!-- Glowing filters -->
+
                 <filter id="glow-repo" x="-20%" y="-20%" width="140%" height="140%">
                     <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#3B82F6" flood-opacity="0.6"/>
                 </filter>
@@ -70,33 +53,19 @@
                 <filter id="glow-bot" x="-20%" y="-20%" width="140%" height="140%">
                     <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#8B5CF6" flood-opacity="0.6"/>
                 </filter>
-                <filter id="glow-dash" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#06B6D4" flood-opacity="0.6"/>
-                </filter>
-                <filter id="glow-updater" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#F59E0B" flood-opacity="0.6"/>
-                </filter>
             </defs>
-            
+
             <!-- Connection Paths -->
             <path id="path-repo-bot" d="" fill="none" stroke="url(#grad-repo-bot)" stroke-width="3" stroke-dasharray="8 6" />
             <path id="path-core-bot" d="" fill="none" stroke="url(#grad-core-bot)" stroke-width="2" stroke-dasharray="4 4" opacity="0.6" />
             <path id="path-repo-dash" d="" fill="none" stroke="url(#grad-repo-dash)" stroke-width="3" stroke-dasharray="8 6" />
-            <path id="path-core-dash" d="" fill="none" stroke="url(#grad-core-dash)" stroke-width="2" stroke-dasharray="4 4" opacity="0.6" />
             <path id="path-bot-updater" d="" fill="none" stroke="url(#grad-bot-updater)" stroke-width="3" stroke-dasharray="8 6" />
-            <path id="path-dash-updater" d="" fill="none" stroke="url(#grad-dash-updater)" stroke-width="3" stroke-dasharray="8 6" />
-            <path id="path-updater-repo" d="" fill="none" stroke="url(#grad-updater-repo)" stroke-width="3" stroke-dasharray="8 6" />
-            <path id="path-updater-core" d="" fill="none" stroke="url(#grad-updater-core)" stroke-width="2" stroke-dasharray="4 4" opacity="0.6" />
 
             <!-- Animated flowing packets (circles) -->
             <circle id="packet-repo-bot" r="6" fill="#3B82F6" filter="url(#glow-repo)" style="display: none;"></circle>
             <circle id="packet-core-bot" r="5" fill="#10B981" filter="url(#glow-core)" style="display: none;"></circle>
             <circle id="packet-repo-dash" r="6" fill="#3B82F6" filter="url(#glow-repo)" style="display: none;"></circle>
-            <circle id="packet-core-dash" r="5" fill="#10B981" filter="url(#glow-core)" style="display: none;"></circle>
             <circle id="packet-bot-updater" r="6" fill="#8B5CF6" filter="url(#glow-bot)" style="display: none;"></circle>
-            <circle id="packet-dash-updater" r="6" fill="#06B6D4" filter="url(#glow-dash)" style="display: none;"></circle>
-            <circle id="packet-updater-repo" r="6" fill="#F59E0B" filter="url(#glow-updater)" style="display: none;"></circle>
-            <circle id="packet-updater-core" r="5" fill="#F59E0B" filter="url(#glow-updater)" style="display: none;"></circle>
         </svg>
 
         <!-- Main Header -->
@@ -105,10 +74,13 @@
                 <img src="../public/aossie-logo.svg" alt="AOSSIE Logo" class="brand-logo" onerror="this.src='https://raw.githubusercontent.com/kpj2006/Template-Repo/main/public/aossie-logo.svg'">
                 <div class="brand-text">
                     <h1>AOSSIE Skill Ecosystem</h1>
-                    <p class="subtitle">Closed-Loop Interactive Agent Governance & Knowledge Simulation</p>
+                    <p class="subtitle">How the real system runs — traced from actual source, not a marketing mockup</p>
                 </div>
             </div>
             <div class="header-right">
+                <button class="btn btn-help" id="btn-toggle-drift">
+                    <i class="fa-solid fa-code-compare"></i> Docs vs Code
+                </button>
                 <button class="btn btn-help" id="btn-toggle-guide">
                     <i class="fa-solid fa-circle-question"></i> Show User Guide
                 </button>
@@ -129,20 +101,19 @@
             <div class="scenario-buttons">
                 <button class="btn btn-scenario active" id="btn-scenario-a" data-scenario="a">
                     <span class="scenario-number">Scenario A</span>
-                    <span class="scenario-name">Discord Chat & Gap Flow (Skill Bot)</span>
+                    <span class="scenario-name">SkillBot answers a Discord question</span>
                 </button>
                 <button class="btn btn-scenario" id="btn-scenario-b" data-scenario="b">
                     <span class="scenario-number">Scenario B</span>
-                    <span class="scenario-name">PR Analysis & Staleness Flow (PR Dashboard)</span>
-                </button>
-                <button class="btn btn-scenario" id="btn-scenario-c" data-scenario="c">
-                    <span class="scenario-number">Scenario C</span>
-                    <span class="scenario-name">Discussion to Update Loop (Skill Updater)</span>
+                    <span class="scenario-name">Maintainer runs the PR Dashboard pipeline</span>
                 </button>
             </div>
             <div class="control-actions">
+                <button class="btn btn-secondary" id="btn-prev-step" disabled>
+                    <i class="fa-solid fa-backward-step"></i> Previous
+                </button>
                 <button class="btn btn-primary" id="btn-trigger-action">
-                    <i class="fa-solid fa-bolt"></i> Trigger Step
+                    <i class="fa-solid fa-forward-step"></i> Next Step
                 </button>
                 <button class="btn btn-secondary" id="btn-autoplay">
                     <i class="fa-solid fa-play"></i> Auto-Play
@@ -155,236 +126,274 @@
 
         <!-- Main Dashboard Grid -->
         <main class="dashboard-grid">
-            
-            <!-- 1. PER-REPOSITORY SKILLS (Blue/Teal) -->
-            <article class="card card-repo" id="card-repo">
-                <div class="card-header">
-                    <div class="header-title">
-                        <i class="fa-solid fa-folder-tree icon-repo"></i>
-                        <h2>Per-Repository Skills</h2>
-                    </div>
-                    <span class="badge badge-repo">LOCAL CONTEXT (.agent/)</span>
-                </div>
-                <p class="card-desc">Project-specific local context, rules, boundaries, and setup instructions. 90% of bot/PR tasks are resolved directly here.</p>
-                
-                <div class="core-explorer">
-                    <!-- File Explorer List -->
-                    <div class="file-tree" id="file-tree-repo">
-                        <div class="tree-header">Local Repo Context</div>
-                        <button type="button" class="tree-item active" data-file="architecture" data-tree="repo">
-                            <i class="fa-solid fa-file-lines text-blue"></i> .agent/core/architecture.md
-                        </button>
-                        <button type="button" class="tree-item" data-file="edge-cases" data-tree="repo">
-                            <i class="fa-solid fa-file-lines text-blue"></i> .agent/core/edge-cases.md
-                        </button>
-                        <button type="button" class="tree-item" data-file="setup" data-tree="repo">
-                            <i class="fa-solid fa-file-lines text-blue"></i> .agent/instructions/setup.md
-                        </button>
-                        <button type="button" class="tree-item" data-file="testing" data-tree="repo">
-                            <i class="fa-solid fa-file-lines text-blue"></i> .agent/instructions/testing.md
-                        </button>
-                        <button type="button" class="tree-item" data-file="operational" data-tree="repo">
-                            <i class="fa-solid fa-file-lines text-blue"></i> .agent/info/operational-data.md
-                        </button>
-                    </div>
-                    <!-- File Editor Panel -->
-                    <div class="file-editor">
-                        <div class="editor-header" id="editor-filename-repo">.agent/core/architecture.md</div>
-                        <pre class="editor-content" id="editor-body-repo">Loading...</pre>
-                    </div>
-                </div>
-            </article>
 
-            <!-- 2. SKILLS CORE (Green) -->
-            <article class="card card-core" id="card-core">
-                <div class="card-header">
-                    <div class="header-title">
-                        <i class="fa-solid fa-database icon-core"></i>
-                        <h2>Skills Core</h2>
-                    </div>
-                    <span class="badge badge-core">ORG-WIDE SKILLS</span>
-                </div>
-                <p class="card-desc">Global organization-wide skills (like AI Policy & onboarding flows). Unified and synced to repos via Git Subtrees.</p>
-                
-                <div class="core-explorer">
-                    <!-- File Explorer List -->
-                    <div class="file-tree" id="file-tree-core">
-                        <div class="tree-header">Org-Wide Core Skills</div>
-                        <button type="button" class="tree-item" data-file="policy" data-tree="core">
-                            <i class="fa-solid fa-file-shield text-green"></i> GIT-DIS-AIPolicy/SKILL.md
-                        </button>
-                        <button type="button" class="tree-item" data-file="onboarding" data-tree="core">
-                            <i class="fa-solid fa-file-shield text-green"></i> onboarding/SKILL.md
-                        </button>
-                        <button type="button" class="tree-item" data-file="mcp" data-tree="core">
-                            <i class="fa-solid fa-file-shield text-green"></i> mcp-integration/SKILL.md
-                        </button>
-                        <button type="button" class="tree-item" data-file="glossary" data-tree="core">
-                            <i class="fa-solid fa-file-lines text-green"></i> GLOSSARY.md
-                        </button>
-                    </div>
-                    <!-- File Editor Panel -->
-                    <div class="file-editor">
-                        <div class="editor-header" id="editor-filename-core">GIT-DIS-AIPolicy/SKILL.md</div>
-                        <pre class="editor-content" id="editor-body-core">Loading...</pre>
-                    </div>
-                </div>
-            </article>
+            <!-- Compact pentagon nodes. Fixed-size, so they never overlap.
+                 Click any node — or run a scenario, which auto-selects and
+                 scrolls to whichever node is currently active — to inspect
+                 it in the Detail Panel below. -->
+            <nav class="pentagon-nodes" aria-label="Skills Ecosystem components">
+                <button type="button" class="card card-repo node-selected" id="card-repo" data-node="repo">
+                    <i class="fa-solid fa-folder-tree icon-repo"></i>
+                    <div class="node-title">Per-Repository Context</div>
+                    <span class="badge badge-repo">LOCAL LAYER</span>
+                </button>
+                <button type="button" class="card card-core" id="card-core" data-node="core">
+                    <i class="fa-solid fa-database icon-core"></i>
+                    <div class="node-title">Skills Core</div>
+                    <span class="badge badge-core">ORG-WIDE</span>
+                </button>
+                <button type="button" class="card card-bot" id="card-bot" data-node="bot">
+                    <i class="fa-brands fa-discord icon-bot"></i>
+                    <div class="node-title">Skill Bot</div>
+                    <span class="badge badge-bot">bot.py</span>
+                </button>
+                <button type="button" class="card card-dash" id="card-dash" data-node="dash">
+                    <i class="fa-solid fa-code-pull-request icon-dash"></i>
+                    <div class="node-title">PR Dashboard</div>
+                    <span class="badge badge-dash">CLI pipeline</span>
+                </button>
+                <button type="button" class="card card-updater" id="card-updater" data-node="updater">
+                    <i class="fa-solid fa-arrows-spin icon-updater"></i>
+                    <div class="node-title">Gap Log &amp; Skill Updater</div>
+                    <span class="badge badge-updater">real + ROADMAP</span>
+                </button>
+            </nav>
 
-            <!-- 3. SKILL BOT (Purple) -->
-            <article class="card card-bot" id="card-bot">
-                <div class="card-header">
-                    <div class="header-title">
-                        <i class="fa-brands fa-discord icon-bot"></i>
-                        <h2>Skill Bot</h2>
-                    </div>
-                    <span class="badge badge-bot">DISCORD ASSISTANT</span>
-                </div>
-                <p class="card-desc">Grounded in local Per-Repository Skills. Intercepts contributor questions, asks clarifying questions, and emits Gap Signals when local rules are insufficient.</p>
-                
-                <div class="discord-simulator">
-                    <div class="discord-header">
-                        <div class="discord-channel"><i class="fa-solid fa-hashtag"></i> ai-chat</div>
-                        <div class="discord-thread-indicator" id="discord-thread-indicator"><i class="fa-solid fa-network-wired"></i> Thread: Setup Queries</div>
-                    </div>
-                    <div class="discord-messages" id="discord-messages">
-                        <div class="discord-message">
-                            <div class="avatar user-avatar"><i class="fa-solid fa-user"></i></div>
-                            <div class="msg-content">
-                                <div class="author-name">Contributor_XYZ</div>
-                                <div class="msg-text">How do I set up this repository for development?</div>
-                            </div>
+            <!-- Detail Panel — shows the full content of exactly one selected
+                 node at a time, so a first-time reader isn't faced with all
+                 five components' worth of text at once. -->
+            <section class="detail-panel" id="detail-panel">
+
+                <div class="detail-content active" id="detail-repo">
+                    <div class="card-header">
+                        <div class="header-title">
+                            <i class="fa-solid fa-folder-tree icon-repo"></i>
+                            <h2>Per-Repository Context</h2>
                         </div>
-                        <div class="discord-message bot-msg">
-                            <div class="avatar bot-avatar"><i class="fa-solid fa-robot"></i></div>
-                            <div class="msg-content">
-                                <div class="author-name">SkillBot <span class="bot-badge">BOT</span></div>
-                                <div class="msg-text">Welcome! Let me check the local repository context for setup steps...</div>
-                            </div>
+                        <span class="badge badge-repo">LOCAL LAYER · AGENTS.md router</span>
+                    </div>
+                    <p class="card-desc">Real example from <code>SocialShareButton</code> (a real AOSSIE repo already on this layout). <code>AGENTS.md</code> is not a data dump — it's a task-intent <strong>router</strong>: it loads only the <code>.agent/</code> files relevant to what you're doing right now.</p>
+
+                    <div class="core-explorer">
+                        <div class="file-tree" id="file-tree-repo">
+                            <div class="tree-header">SocialShareButton (real repo)</div>
+                            <button type="button" class="tree-item active" data-file="agents" data-tree="repo">
+                                <i class="fa-solid fa-compass text-blue"></i> AGENTS.md <span class="mini-tag">router</span>
+                            </button>
+                            <button type="button" class="tree-item" data-file="architecture" data-tree="repo">
+                                <i class="fa-solid fa-file-lines text-blue"></i> .agent/core/architecture.md
+                            </button>
+                            <button type="button" class="tree-item" data-file="edge-cases" data-tree="repo">
+                                <i class="fa-solid fa-file-lines text-blue"></i> .agent/core/edge-cases.md
+                            </button>
+                            <button type="button" class="tree-item" data-file="setup" data-tree="repo">
+                                <i class="fa-solid fa-file-lines text-blue"></i> .agent/instructions/setup.md
+                            </button>
+                            <button type="button" class="tree-item" data-file="testing" data-tree="repo">
+                                <i class="fa-solid fa-file-lines text-blue"></i> .agent/instructions/testing.md
+                            </button>
+                            <button type="button" class="tree-item" data-file="operational" data-tree="repo">
+                                <i class="fa-solid fa-file-lines text-blue"></i> .agent/info/operational-data.md
+                            </button>
+                        </div>
+                        <div class="file-editor">
+                            <div class="editor-header" id="editor-filename-repo">AGENTS.md</div>
+                            <pre class="editor-content" id="editor-body-repo">Loading...</pre>
                         </div>
                     </div>
-                    <!-- Option Selectors / Quick Prompt Triggers -->
-                    <div class="prompt-choices" id="prompt-choices" style="display: none;">
-                        <button class="choice-btn" data-choice="clarify">Option A: Ask Clarifying Question (Roadmap Phase 1)</button>
-                        <button class="choice-btn" data-choice="gap">Option B: Fallback to General LLM & Log Gap Signal</button>
-                    </div>
-                    <div class="discord-input">
-                        <input type="text" id="discord-text-input" placeholder="Type a message or trigger scenario above..." disabled>
-                        <button class="send-btn" disabled><i class="fa-solid fa-paper-plane"></i></button>
-                    </div>
                 </div>
-            </article>
 
-            <!-- 4. PR DASHBOARD (Blue) -->
-            <article class="card card-dash" id="card-dash">
-                <div class="card-header">
-                    <div class="header-title">
-                        <i class="fa-solid fa-code-pull-request icon-dash"></i>
-                        <h2>PR Dashboard</h2>
+                <div class="detail-content" id="detail-core">
+                    <div class="card-header">
+                        <div class="header-title">
+                            <i class="fa-solid fa-database icon-core"></i>
+                            <h2>Skills Core</h2>
+                        </div>
+                        <span class="badge badge-core">ORG-WIDE · AOSSIE-Org/Skills</span>
                     </div>
-                    <span class="badge badge-dash">MAINTAINER SYSTEM</span>
+                    <p class="card-desc">The single upstream repo. Distribution into each project is a real script — <code>SkillBot/scripts/sync_org_skills.py</code> copies each <code>SKILL.md</code> into that repo's <code>org-wide-skills/</code> folder. There is no git-subtree mechanism, despite what older docs claimed.</p>
+
+                    <div class="core-explorer">
+                        <div class="file-tree" id="file-tree-core">
+                            <div class="tree-header">AOSSIE-Org/Skills (real repo)</div>
+                            <button type="button" class="tree-item" data-file="onboarding" data-tree="core">
+                                <i class="fa-solid fa-signs-post text-green"></i> contributor-onboarding/SKILL.md
+                            </button>
+                            <button type="button" class="tree-item active" data-file="policy" data-tree="core">
+                                <i class="fa-solid fa-file-shield text-green"></i> GIT-DIS-AIPolicy/SKILL.md
+                            </button>
+                            <button type="button" class="tree-item" data-file="policy-rules" data-tree="core">
+                                <i class="fa-solid fa-arrow-turn-down text-green"></i> ↳ references/ai-policy-rules.md
+                            </button>
+                            <button type="button" class="tree-item" data-file="mcp" data-tree="core">
+                                <i class="fa-solid fa-plug text-green"></i> mcp-integration/SKILL.md
+                            </button>
+                            <button type="button" class="tree-item" data-file="template" data-tree="core">
+                                <i class="fa-solid fa-layer-group text-green"></i> project-template/SKILL.md
+                            </button>
+                            <button type="button" class="tree-item" data-file="coderabbit" data-tree="core">
+                                <i class="fa-solid fa-code-pull-request text-green"></i> resolve-coderabbit-comments/SKILL.md
+                            </button>
+                            <button type="button" class="tree-item" data-file="glossary" data-tree="core">
+                                <i class="fa-solid fa-book text-green"></i> GLOSSARY.md
+                            </button>
+                        </div>
+                        <div class="file-editor">
+                            <div class="editor-header" id="editor-filename-core">GIT-DIS-AIPolicy/SKILL.md</div>
+                            <pre class="editor-content" id="editor-body-core">Loading...</pre>
+                        </div>
+                    </div>
                 </div>
-                <p class="card-desc">Queries local Per-Repository Skills to inject architectural boundaries, analyze open PRs, detect semantic conflicts, and signal staleness.</p>
-                
-                <div class="dashboard-simulator">
-                    <div class="dashboard-tabs" role="tablist" aria-label="PR Analysis Views">
-                        <button type="button" class="dash-tab active" id="tab-dag" role="tab" aria-selected="true" aria-controls="panel-dag" data-tab="dag">Conflict DAG</button>
-                        <button type="button" class="dash-tab" id="tab-isolated" role="tab" aria-selected="false" aria-controls="panel-isolated" data-tab="isolated">Isolated PRs</button>
+
+                <div class="detail-content" id="detail-bot">
+                    <div class="card-header">
+                        <div class="header-title">
+                            <i class="fa-brands fa-discord icon-bot"></i>
+                            <h2>Skill Bot</h2>
+                        </div>
+                        <span class="badge badge-bot">bot.py · plain discord.Client</span>
                     </div>
-                    <div class="tab-panel active" id="panel-dag" role="tabpanel" aria-labelledby="tab-dag">
-                        <div class="dag-container">
-                            <div class="dag-node main-node">
-                                <div class="node-title">main branch</div>
-                                <div class="node-meta">Target State</div>
-                            </div>
-                            
-                            <div class="dag-connector-v"></div>
-                            
-                            <div class="dag-row">
-                                <div class="dag-node pr-node conflict" id="dag-pr-41">
-                                    <div class="node-title">PR #41: Add Postgres</div>
-                                    <div class="node-meta">Author: Alice</div>
-                                </div>
-                                <div class="dag-node-h-connect text-red"><i class="fa-solid fa-arrows-left-right-to-line"></i> Semantic Conflict</div>
-                                <div class="dag-node pr-node conflict" id="dag-pr-42">
-                                    <div class="node-title">PR #42: Database ORM</div>
-                                    <div class="node-meta">Author: Bob</div>
+                    <p class="card-desc"><strong>No vector database, no embeddings, no confidence score anywhere in this codebase.</strong> Repo routing is keyword string-matching (LLM fallback only if that fails). Context layers are concatenated in one fixed priority order. Ollama is called unconditionally — a gap is logged only <em>after the fact</em>, on a small set of concrete failure reasons.</p>
+
+                    <div class="discord-simulator">
+                        <div class="discord-header">
+                            <div class="discord-channel"><i class="fa-solid fa-hashtag"></i> ai-chat</div>
+                            <div class="discord-thread-indicator" id="discord-thread-indicator"><i class="fa-solid fa-network-wired"></i> Thread: per top-level message, 24h auto-archive</div>
+                        </div>
+                        <div class="discord-messages" id="discord-messages">
+                            <div class="discord-message">
+                                <div class="msg-content" style="opacity:0.6;">
+                                    <div class="msg-text">SkillBot is idle. Click "Trigger Step" or "Auto-Play" above to send a real message flow.</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="conflict-explanation" id="conflict-explanation">
-                            <strong>Conflict Reasoning (Ollama + Local Architecture):</strong> Alice adds pg-client utilities directly in controllers, violating Layer 1 architecture rules. Bob sets up Prisma ORM in `backend/models`. 
-                            <span class="recommendation">Recommendation: Merge Bob (PR #42) first, then rewrite Alice (PR #41) to use Prisma model layer.</span>
+                        <div class="prompt-choices" id="prompt-choices" style="display: none;">
+                            <div class="gate-hint">This is not a scripted choice — it runs the real <code>detect_repo_by_keywords()</code> word-match against whatever you type below. Try one of these, or type your own:</div>
+                            <div class="suggestion-row">
+                                <button type="button" class="choice-btn suggestion-chip" data-fill="How do I set up SocialShareButton for development?">"How do I set up SocialShareButton for development?" — matches a keyword</button>
+                                <button type="button" class="choice-btn suggestion-chip" data-fill="Hey Chatbot">"Hey Chatbot" — real gap_log.json example, matches nothing</button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="tab-panel" id="panel-isolated" style="display: none;" role="tabpanel" aria-labelledby="tab-isolated">
-                        <div class="isolated-list">
-                            <div class="isolated-card">
-                                <div class="isolated-header">
-                                    <h4>PR #45: Fix Landing Page CSS alignment</h4>
-                                    <span class="safe-badge"><i class="fa-solid fa-circle-check"></i> Safe to Merge</span>
-                                </div>
-                                <p>Simple CSS adjustment in UI component. Zero conflicts with open PRs.</p>
-                            </div>
-                            <div class="isolated-card">
-                                <div class="isolated-header">
-                                    <h4>PR #48: Add Lint configuration rule</h4>
-                                    <span class="safe-badge"><i class="fa-solid fa-circle-check"></i> Safe to Merge</span>
-                                </div>
-                                <p>Updates static linters. No overlapping code logic.</p>
-                            </div>
+                        <div class="discord-input">
+                            <input type="text" id="discord-text-input" placeholder="Type a message, then press Send or Enter...">
+                            <button class="send-btn" id="discord-send-btn"><i class="fa-solid fa-paper-plane"></i></button>
                         </div>
                     </div>
                 </div>
-            </article>
 
-            <!-- 5. SKILL UPDATER (Amber) -->
-            <article class="card card-updater" id="card-updater">
-                <div class="card-header">
-                    <div class="header-title">
-                        <i class="fa-solid fa-arrows-spin icon-updater"></i>
-                        <h2>Skill Updater</h2>
+                <div class="detail-content" id="detail-dash">
+                    <div class="card-header">
+                        <div class="header-title">
+                            <i class="fa-solid fa-code-pull-request icon-dash"></i>
+                            <h2>PR Dashboard</h2>
+                        </div>
+                        <span class="badge badge-dash">main.py · one-shot CLI pipeline</span>
                     </div>
-                    <span class="badge badge-updater">KNOWLEDGE EVOLUTION</span>
+                    <p class="card-desc">Not a running web app — a Python script that shells out to <code>gh</code> and Ollama, then writes two static HTML files. Grouping is real (sentence-transformer embeddings + clustering); the "Conflict DAG" is actually independent per-cluster SVG diagrams, not one real graph.</p>
+
+                    <div class="dashboard-simulator">
+                        <div class="dashboard-tabs" role="tablist" aria-label="PR Analysis Views">
+                            <button type="button" class="dash-tab active" id="tab-dag" role="tab" aria-selected="true" aria-controls="panel-dag" data-tab="dag">Conflict Groups</button>
+                            <button type="button" class="dash-tab" id="tab-isolated" role="tab" aria-selected="false" aria-controls="panel-isolated" data-tab="isolated">Isolated PRs</button>
+                        </div>
+                        <div class="tab-panel active" id="panel-dag" role="tabpanel" aria-labelledby="tab-dag">
+                            <div class="dag-container">
+                                <div class="dag-node main-node">
+                                    <div class="node-title">main branch</div>
+                                    <div class="node-meta">Target State</div>
+                                </div>
+
+                                <div class="dag-connector-v"></div>
+
+                                <div class="dag-row">
+                                    <div class="dag-node pr-node conflict" id="dag-pr-41">
+                                        <div class="node-title">PR #41 (illustrative)</div>
+                                        <div class="node-meta">Author: Alice</div>
+                                    </div>
+                                    <div class="dag-node-h-connect text-red"><i class="fa-solid fa-arrows-left-right-to-line"></i> avg_sim in cluster</div>
+                                    <div class="dag-node pr-node conflict" id="dag-pr-42">
+                                        <div class="node-title">PR #42 (illustrative)</div>
+                                        <div class="node-meta">Author: Bob</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="conflict-explanation" id="conflict-explanation">
+                                <strong>How grouping actually works:</strong> sentence-transformers (<code>all-MiniLM-L6-v2</code>) embeds each PR's title+body+CodeRabbit walkthrough, then <code>util.community_detection</code> clusters at cosine similarity ≥ 0.55 (min cluster size 2). Within a cluster, avg similarity &gt; 0.75 → "duplicate" label, else "conflict" — a fixed numeric heuristic, not code-aware reasoning.
+                                <span class="recommendation">Ollama (llama3.2) is only asked afterward to write a human-readable explanation for this cluster — it never decides the grouping.</span>
+                            </div>
+                        </div>
+                        <div class="tab-panel" id="panel-isolated" style="display: none;" role="tabpanel" aria-labelledby="tab-isolated">
+                            <div class="isolated-list">
+                                <div class="isolated-card">
+                                    <div class="isolated-header">
+                                        <h4>Any PR not captured by a cluster</h4>
+                                        <span class="safe-badge"><i class="fa-solid fa-circle-check"></i> "Isolated"</span>
+                                    </div>
+                                    <p>The only criterion is that <code>community_detection</code> didn't group it with anything above the 0.55 threshold. There's no additional file-overlap or safety check beyond that.</p>
+                                </div>
+                                <div class="isolated-card">
+                                    <div class="isolated-header">
+                                        <h4>Individually summarized</h4>
+                                        <span class="safe-badge"><i class="fa-solid fa-circle-check"></i> analyse_single_pr()</span>
+                                    </div>
+                                    <p>Ollama (llama3.2) still writes a short summary for each isolated PR, rendered as a card via <code>build_isolated_html</code>.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <p class="card-desc">Processes Discord conversations, gap logs, and staleness logs. Groups them semantically via BERTopic to generate Git patches that update Per-Repository Skills.</p>
-                
-                <div class="updater-simulator">
-                    <div class="pipeline-flow">
-                        <!-- Step 1: Input Sources -->
-                        <div class="pipeline-step" id="step-poll">
-                            <div class="step-icon"><i class="fa-solid fa-arrows-down-to-people"></i></div>
-                            <div class="step-info">
-                                <h5>1. Fetch & Poll</h5>
-                                <p id="updater-input-src">Idle. Awaiting signal...</p>
-                            </div>
+
+                <div class="detail-content" id="detail-updater">
+                    <div class="card-header">
+                        <div class="header-title">
+                            <i class="fa-solid fa-arrows-spin icon-updater"></i>
+                            <h2>Gap Log &amp; Skill Updater</h2>
                         </div>
-                        <div class="pipeline-arrow"><i class="fa-solid fa-chevron-right"></i></div>
-                        <!-- Step 2: Topic Clustering -->
-                        <div class="pipeline-step" id="step-cluster">
-                            <div class="step-icon"><i class="fa-solid fa-tags"></i></div>
-                            <div class="step-info">
-                                <h5>2. Semantic Cluster</h5>
-                                <p id="updater-cluster-info">BERTopic Online Model</p>
-                            </div>
-                        </div>
-                        <div class="pipeline-arrow"><i class="fa-solid fa-chevron-right"></i></div>
-                        <!-- Step 3: Git Patch Apply -->
-                        <div class="pipeline-step" id="step-patch">
-                            <div class="step-icon"><i class="fa-solid fa-file-pen"></i></div>
-                            <div class="step-info">
-                                <h5>3. Auto-Patch Apply</h5>
-                                <p id="updater-patch-info">Git-backed repo update</p>
-                            </div>
-                        </div>
+                        <span class="badge badge-updater">gap_log.json is real · pipeline below is ROADMAP</span>
                     </div>
-                    
-                    <div class="patch-preview-container" style="display: none;" id="patch-preview-container">
-                        <div class="patch-header">Generated Git Diff Patch</div>
-                        <pre class="patch-diff" id="patch-diff-content">No active patches.</pre>
+                    <p class="card-desc">SkillBot really does append to <code>gap_log.json</code> — but nothing in this org's codebase reads it back yet. The "Skill Updater" (BERTopic clustering, auto-drafted skill PRs) described in the org README lives, partially, in a separate, currently unintegrated repo.</p>
+
+                    <div class="updater-simulator">
+                        <div class="gap-log-section-header">
+                            <i class="fa-solid fa-database"></i> Real sink: <code>SkillBot/gap_log.json</code>
+                            <span class="badge badge-live">LIVE, UNCONSUMED</span>
+                        </div>
+                        <div class="gap-log-list" id="gap-log-list">
+                            <!-- seeded with real historical entries by app.js -->
+                        </div>
+
+                        <div class="roadmap-panel">
+                            <div class="roadmap-ribbon"><i class="fa-solid fa-triangle-exclamation"></i> ROADMAP — no integrated code exists for this yet</div>
+                            <div class="pipeline-flow">
+                                <div class="pipeline-step" id="step-poll">
+                                    <div class="step-icon"><i class="fa-solid fa-arrows-down-to-people"></i></div>
+                                    <div class="step-info">
+                                        <h5>1. Poll gap_log.json + Discord</h5>
+                                        <p>Design intent only — described in the org README, not yet built here.</p>
+                                    </div>
+                                </div>
+                                <div class="pipeline-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                                <div class="pipeline-step" id="step-cluster">
+                                    <div class="step-icon"><i class="fa-solid fa-tags"></i></div>
+                                    <div class="step-info">
+                                        <h5>2. BERTopic Cluster</h5>
+                                        <p>Prototyped in a separate repo (kpj2006/skill-updater), not wired in.</p>
+                                    </div>
+                                </div>
+                                <div class="pipeline-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                                <div class="pipeline-step" id="step-patch">
+                                    <div class="step-icon"><i class="fa-solid fa-file-pen"></i></div>
+                                    <div class="step-info">
+                                        <h5>3. Auto-Patch Skill PR</h5>
+                                        <p>No git-patch or PR-bot code exists in Skills Core or SkillBot today.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </article>
+
+            </section>
 
         </main>
 
@@ -396,12 +405,12 @@
                     <h3>Ecosystem Under the Hood Console</h3>
                 </div>
                 <div class="console-controls">
-                    <span class="console-tag">ollama: nomic-embed-text & llama3</span>
+                    <span class="console-tag">ollama: llama3.2 (SkillBot) · llama3.2:latest + all-MiniLM-L6-v2 (PR Dashboard)</span>
                     <button class="console-clear-btn" id="console-clear"><i class="fa-solid fa-trash-can"></i> Clear</button>
                 </div>
             </div>
             <div class="console-terminal" id="console-terminal">
-                <div class="log-line system-log">[SYSTEM] AOSSIE Skill Ecosystem Simulation initialized. Select a scenario above to trace data flows.</div>
+                <div class="log-line system-log">[SYSTEM] AOSSIE Skill Ecosystem Simulation initialized. Select a scenario above to trace real data flows.</div>
             </div>
         </footer>
     </div>
@@ -415,52 +424,70 @@
             </div>
             <div class="guide-modal-body">
                 <div class="guide-intro">
-                    <p>Welcome to the <strong>AOSSIE Skills Ecosystem Simulator</strong>!</p>
-                    <p>This is a scalable, end-to-end repository governance system designed to ensure zero knowledge loss. It automatically catches insights from developer discussions to update repository skill files, runs community bots to resolve contributor questions, and displays a dashboard that highlights conflict warnings, suggested replies for ambiguous contributor PRs, and recommended merge sequences. If any knowledge is missing, it logs a gap signal to capture it later.</p>
-                    <p><strong>🔒 Local-First, Private & Scalable:</strong> Tested on servers with over 8,000+ members, the entire system is free, open-source, and runs fully on local LLMs—meaning zero info leaks, absolute data privacy, and zero SaaS costs, all while keeping a human in the loop.</p>
+                    <p>Welcome! This simulator exists because the ecosystem's own docs had drifted from its code — new contributors couldn't tell what was actually running versus aspirational. Everything here was verified against the real source of <strong>SkillBot</strong>, <strong>PullRequestDashboard</strong>, and the <strong>Skills Core</strong> (<code>AOSSIE-Org/Skills</code>) repos.</p>
+                    <p><strong>Two things are explicitly separate here:</strong> what's <em>live, running code today</em> (the two scenarios you can trigger, and the Per-Repo Context / Skills Core / SkillBot / PR Dashboard cards), versus what's <em>planned but not yet built</em> (the Skill Updater's clustering-and-auto-PR pipeline — clearly marked ROADMAP).</p>
                 </div>
-                
+
                 <div class="guide-section">
                     <h3><i class="fa-solid fa-cubes"></i> Core Architecture</h3>
                     <div class="architecture-grid">
                         <div class="arch-box">
-                            <span class="arch-tag tag-repo"><i class="fa-solid fa-folder-tree"></i> Per-Repository Customization</span>
-                            <p>Local config files (<code>.agent/</code> and <code>AGENTS.md</code>) unique to each project. They store setup, testing, and architecture boundaries to resolve 90% of contributor queries locally.</p>
+                            <span class="arch-tag tag-repo"><i class="fa-solid fa-folder-tree"></i> Per-Repository Context</span>
+                            <p><code>AGENTS.md</code> is a task-intent <strong>router</strong> in each project repo — it points to only the <code>.agent/core</code>, <code>.agent/instructions</code>, and <code>.agent/info</code> files relevant to the current request, instead of loading everything at once.</p>
                         </div>
                         <div class="arch-box">
-                            <span class="arch-tag tag-core"><i class="fa-solid fa-database"></i> Organization-Wide Skills Core</span>
-                            <p>Global, shared skills (such as AI Policy & onboarding flows) that remain consistent across all repositories, synchronized via Git Subtrees.</p>
+                            <span class="arch-tag tag-core"><i class="fa-solid fa-database"></i> Skills Core (org-wide)</span>
+                            <p>Skills live once in <code>AOSSIE-Org/Skills</code> as <code>SKILL.md</code> files (Claude-Code-style skills, with <code>references/</code> for on-demand detail). <code>SkillBot/scripts/sync_org_skills.py</code> is the real, code-backed way they reach each project's <code>org-wide-skills/</code> folder.</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="guide-section">
-                    <h3><i class="fa-solid fa-triangle-exclamation"></i> Real-World Challenges Solved</h3>
-                    <div class="challenges-list" style="display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.5rem;">
-                        <div><strong>1. Unstructured AI Contributions:</strong> Prevents generic AI tools from suggesting incorrect code or violating project size/design limits.</div>
-                        <div><strong>2. Repetitive Queries:</strong> Instantly answers developer FAQs about setup, formatting, and onboarding.</div>
-                        <div><strong>3. Ephemeral Knowledge Loss:</strong> Automatically captures maintainer decisions discussed in Discord threads into Git-tracked documentation.</div>
-                        <div><strong>4. PR Merge Overhead:</strong> Clusters open PRs and flags code conflicts, drawing an optimal merge DAG.</div>
-                        <div><strong>5. Review Delays:</strong> Solves reviewer bottlenecks for sub-projects that lack dedicated maintainers.</div>
-                    </div>
-                </div>
-
-                <div class="guide-section">
-                    <h3><i class="fa-solid fa-gears"></i> Core Ecosystem Modules</h3>
+                    <h3><i class="fa-solid fa-gears"></i> What's Actually Running</h3>
                     <div class="modules-grid" style="display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.5rem;">
-                        <div class="module-item"><strong>Skill Bot:</strong> Discord assistant that intercepts contributor queries, runs semantic vector searches against local/global skills, and logs knowledge gaps for maintainers.</div>
-                        <div class="module-item"><strong>PR Dashboard:</strong> Local developer dashboard that clusters open Pull Requests, injects skill rules, and checks local code boundaries to render a Conflict DAG.</div>
-                        <div class="module-item"><strong>Skill Updater:</strong> Background pipeline that semantically clusters developer discussions using BERTopic to draft Git patches updating the codebase skills.</div>
+                        <div class="module-item"><strong>Skill Bot:</strong> keyword-matches the message to a repo (LLM classifier as fallback only), concatenates that repo's context in a fixed priority order, and unconditionally calls Ollama (llama3.2). It logs a gap to <code>gap_log.json</code> only on specific failure reasons — <code>repo_clarification_needed</code>, <code>no_repo_context</code>, <code>ollama_unavailable</code>, <code>processing_error</code>, <code>thread_creation_failed</code> — never on a confidence/quality judgment, because none exists.</div>
+                        <div class="module-item"><strong>PR Dashboard:</strong> a CLI script (<code>main.py</code>) that fetches PRs via <code>gh</code>, embeds them with <code>sentence-transformers</code>, clusters by cosine similarity, asks Ollama to explain each cluster afterward, and writes static HTML. It currently runs against closed PRs on a single hardcoded demo repo, and its skill-context loader currently no-ops (see "Docs vs Code").</div>
+                        <div class="module-item"><strong>Skill Updater:</strong> described in the org README as a BERTopic-based knowledge-evolution pipeline. <strong>Not integrated anywhere in this org's active codebase</strong> — <code>gap_log.json</code> is a real, growing file that nothing currently reads.</div>
                     </div>
                 </div>
 
                 <div class="guide-section">
                     <h3><i class="fa-solid fa-play"></i> Running the Simulation</h3>
-                    <p>Select a scenario at the top (<strong>A, B, or C</strong>) and click <strong>Trigger Step</strong> or <strong>Auto-Play</strong> to watch data flows trace in real-time between Per-Repository Skills, Skills Core, Skill Bot, PR Dashboard, and the Skill Updater.</p>
+                    <p>Select <strong>Scenario A</strong> or <strong>B</strong> above and click <strong>Trigger Step</strong> or <strong>Auto-Play</strong>. Click <strong>Docs vs Code</strong> in the header for a list of concrete, verified gaps between what the docs say and what the code does — several are marked as good first contributions.</p>
                 </div>
             </div>
             <div class="guide-modal-footer">
                 <button class="btn btn-primary" id="btn-start-guide">Got It, Let's Play!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Docs vs Code Drift Modal -->
+    <div class="guide-modal-overlay" id="drift-modal" style="display: none;">
+        <div class="guide-modal">
+            <div class="guide-modal-header">
+                <h2><i class="fa-solid fa-code-compare"></i> Docs vs Code — Verified Gaps</h2>
+                <button class="close-guide-btn" id="btn-close-drift"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="guide-modal-body">
+                <div class="guide-intro">
+                    <p>Each item below was confirmed by reading the actual source, not by re-reading the README. These are honest, current gaps — several are good first contributions if you want to help close them.</p>
+                </div>
+                <div class="guide-section">
+                    <div class="modules-grid" style="display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.5rem;">
+                        <div class="module-item"><strong>SkillBot's own README</strong> says context comes from <code>AGENTS.md</code>; the code (<code>repo_router.py</code>) actually reads <code>.agent/core|info|instructions/*.md</code> and <code>skills/**/SKILL.md</code> — it never reads <code>AGENTS.md</code> itself.</div>
+                        <div class="module-item"><strong>PR Dashboard's <code>scripts/update_subtrees.py</code></strong> syncs skill files into SocialShareButton, OrgExplorer, GSoC-Proposal-Assistant, and Template-Repo — not into <code>MiniChain</code>, the repo <code>github.py</code> actually fetches PRs for. Context injection for the analyzed repo currently has nothing to load.</div>
+                        <div class="module-item"><strong>PR Dashboard's <code>context.py</code></strong> globs <code>repos/&lt;repo&gt;/**/*.md</code> for skill context, but the <code>repos/</code> directory doesn't exist in a fresh checkout — this step silently no-ops rather than erroring.</div>
+                        <div class="module-item"><strong><code>dashboard.py</code></strong> at the PR Dashboard repo root is legacy/dead code (an earlier monolithic version, hardcoded to a different model). Nothing imports it — <code>main.py</code> + <code>github.py</code> + <code>grouping.py</code> + <code>ollama.py</code> + <code>render.py</code> is the real pipeline.</div>
+                        <div class="module-item"><strong>PR Dashboard currently fetches <code>state=closed</code> PRs</strong> for a hardcoded repo (test/demo mode) — not the live open-PR triage the README describes.</div>
+                        <div class="module-item">The <strong>"Skill Updater"</strong> (BERTopic clustering, auto-PR patches) doesn't exist as integrated code in either SkillBot or PR Dashboard — it's a separate, external, not-yet-wired-in repo.</div>
+                        <div class="module-item">The Skills Core repo's own root <strong><code>CONTRIBUTING.md</code></strong> is still generic, unfilled Template-Repo boilerplate — confirmed by the repo's own <code>AGENTS.md</code>, which flags it.</div>
+                        <div class="module-item">Neither SkillBot's gap-fallback nor PR Dashboard's duplicate/conflict split uses any learned or adaptive threshold — just two fixed numeric cutoffs (cosine ≥ 0.55 for clustering, avg similarity &gt; 0.75 for "duplicate").</div>
+                    </div>
+                </div>
+            </div>
+            <div class="guide-modal-footer">
+                <button class="btn btn-primary" id="btn-close-drift-2" onclick="document.getElementById('drift-modal').style.display='none'">Close</button>
             </div>
         </div>
     </div>

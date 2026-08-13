@@ -345,118 +345,129 @@ body {
     color: var(--text-primary);
 }
 
-/* Dashboard Grid */
+/* Dashboard Grid — a compact pentagon of nodes, then one shared Detail
+   Panel below it that shows exactly one node's full content at a time. */
 .dashboard-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
     z-index: 2;
     position: relative;
     max-width: 100%;
     margin-left: auto;
     margin-right: auto;
     padding: 1.5rem 1rem;
-    border: 1px dashed rgba(139, 92, 246, 0.1);
+}
+
+/* --- Pentagon nodes: fixed-size buttons, so state changes (processing,
+   dimmed, active) or a click can never make them overlap regardless of
+   viewport or content length — the actual content lives in the Detail
+   Panel, not in these nodes. --- */
+.pentagon-nodes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.25rem;
+    padding: 1rem;
+    border: 1px dashed rgba(139, 92, 246, 0.15);
     border-radius: 20px;
-    background: radial-gradient(circle at center, rgba(139, 92, 246, 0.02) 0%, transparent 70%);
+    background: radial-gradient(circle at center, rgba(139, 92, 246, 0.03) 0%, transparent 70%);
 }
 
-.card {
-    max-width: 100%;
-    width: auto;
-    position: relative;
-    margin-bottom: 0;
-}
-
-/* Tablet grid layout */
-@media (min-width: 601px) and (max-width: 1024px) {
-    .dashboard-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 2rem 1.5rem;
-    }
-    .card-bot {
-        grid-column: span 2;
-        justify-self: center;
-        width: 320px;
-    }
-}
-
-/* Desktop Pentagon layout */
-@media (min-width: 1025px) {
-    .dashboard-grid {
-        display: block; /* Disable grid for absolute positioning */
-        width: 100%;
-        max-width: 1350px;
-        height: 950px;
-        padding: 3rem 1rem;
-        border: 1px dashed rgba(139, 92, 246, 0.15);
-        background: radial-gradient(circle at 50% 53%, rgba(139, 92, 246, 0.04) 0%, transparent 60%);
-    }
-
-    .card {
-        max-width: 320px;
-        width: 320px;
-        position: absolute;
-        margin-bottom: 0;
-    }
-
-    /* Vertex 0: Top Center */
-    .card-bot {
-        left: 50%;
-        top: 20%;
-        transform: translate(-50%, -50%);
-    }
-
-    /* Vertex 1: Top Right */
-    .card-core {
-        left: 83.3%;
-        top: 42.8%;
-        transform: translate(-50%, -50%);
-    }
-
-    /* Vertex 2: Bottom Right */
-    .card-updater {
-        left: 70.6%;
-        top: 79.7%;
-        transform: translate(-50%, -50%);
-    }
-
-    /* Vertex 3: Bottom Left */
-    .card-repo {
-        left: 29.4%;
-        top: 79.7%;
-        transform: translate(-50%, -50%);
-    }
-
-    /* Vertex 4: Top Left */
-    .card-dash {
-        left: 16.7%;
-        top: 42.8%;
-        transform: translate(-50%, -50%);
-    }
-}
-
-/* Card Styling */
 .card {
     background: var(--card-bg);
     border: 2px solid var(--card-border);
     border-radius: 16px;
-    padding: 1.5rem;
     backdrop-filter: blur(12px);
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 0.5rem;
+    width: 190px;
+    min-height: 120px;
+    padding: 1rem;
+    cursor: pointer;
     transition: var(--transition-smooth);
+    font-family: inherit;
+    /* --card-anchor positions the node on its pentagon vertex (desktop
+       only, see below); --card-scale is set by state classes further down.
+       Composed here so a state change never overwrites the vertex anchor. */
+    transform: var(--card-anchor, translate(0, 0)) var(--card-scale, scale(1));
+}
+
+.pentagon-nodes .card i {
+    font-size: 1.75rem;
+}
+
+.pentagon-nodes .card .node-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.85rem;
+    line-height: 1.25;
+    color: var(--text-primary);
 }
 
 .card.active-card {
     border-width: 2px;
-    transform: scale(1.01);
+    --card-scale: scale(1.01);
+}
+
+.card.node-selected {
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
 }
 
 /* Hover glow states */
 .card:hover {
     border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Desktop: arrange the 5 compact nodes at true pentagon vertices. Safe now
+   because nodes are fixed-size regardless of state — the overlap bugs in
+   earlier iterations came from either resizing the node itself or from
+   putting full content panels at these same fixed points. */
+@media (min-width: 1025px) {
+    .pentagon-nodes {
+        position: relative;
+        display: block;
+        width: 100%;
+        max-width: 900px;
+        height: 420px;
+        margin: 0 auto;
+    }
+
+    .pentagon-nodes .card {
+        position: absolute;
+    }
+
+    .card-bot    { left: 50%;   top: 8%;  --card-anchor: translate(-50%, -50%); }
+    .card-core   { left: 88%;   top: 38%; --card-anchor: translate(-50%, -50%); }
+    .card-updater{ left: 71%;   top: 88%; --card-anchor: translate(-50%, -50%); }
+    .card-repo   { left: 29%;   top: 88%; --card-anchor: translate(-50%, -50%); }
+    .card-dash   { left: 12%;   top: 38%; --card-anchor: translate(-50%, -50%); }
+}
+
+/* --- Detail Panel: exactly one .detail-content shown at a time --- */
+.detail-panel {
+    background: var(--card-bg);
+    border: 2px solid var(--card-border);
+    border-radius: 16px;
+    padding: 1.75rem;
+    backdrop-filter: blur(12px);
+    min-height: 320px;
+}
+
+.detail-content {
+    display: none;
+    flex-direction: column;
+    gap: 1rem;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.detail-content.active {
+    display: flex;
 }
 
 .card-repo.active-glow {
@@ -604,6 +615,19 @@ body {
 .card-repo .tree-item.active {
     background: rgba(59, 130, 246, 0.08);
     color: var(--color-repo);
+}
+
+.mini-tag {
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--color-repo);
+    background: rgba(59, 130, 246, 0.12);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 999px;
+    padding: 1px 6px;
+    margin-left: auto;
 }
 
 .file-editor {
@@ -825,6 +849,27 @@ body {
     color: #E9D5FF;
 }
 
+.gate-hint {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.gate-hint code {
+    font-family: var(--font-mono);
+    color: var(--color-bot);
+}
+
+.suggestion-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.suggestion-chip {
+    white-space: normal;
+}
+
 /* --------------------------------- */
 /* 3. PR Dashboard Simulator Styling */
 /* --------------------------------- */
@@ -1020,13 +1065,95 @@ body {
 .updater-simulator {
     border: 1px solid var(--card-border);
     border-radius: 8px;
-    height: 240px;
+    min-height: 240px;
     background: rgba(10, 15, 29, 0.6);
     padding: 0.75rem;
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
     overflow-y: auto;
+}
+
+/* Gap log — real, live sink written by SkillBot */
+.gap-log-section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.gap-log-section-header code {
+    font-family: var(--font-mono);
+    color: var(--color-updater);
+}
+
+.badge-live {
+    background: rgba(16, 185, 129, 0.12);
+    color: var(--color-success);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    font-size: 0.55rem;
+    padding: 2px 6px;
+    border-radius: 999px;
+    margin-left: auto;
+    letter-spacing: 0.03em;
+}
+
+.gap-log-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    max-height: 110px;
+    overflow-y: auto;
+    background: rgba(5, 7, 15, 0.5);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    padding: 0.5rem;
+}
+
+.gap-log-entry {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    line-height: 1.4;
+}
+
+.gap-log-entry-new {
+    animation: fadeIn 0.4s ease-out;
+}
+
+.gap-reason {
+    color: var(--color-updater);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.gap-query {
+    color: var(--text-secondary);
+    overflow-wrap: anywhere;
+}
+
+/* Roadmap panel — explicitly not-yet-built, visually distinct from live parts */
+.roadmap-panel {
+    border: 1px dashed rgba(245, 158, 11, 0.35);
+    border-radius: 8px;
+    padding: 0.5rem;
+    background: rgba(245, 158, 11, 0.03);
+}
+
+.roadmap-ribbon {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: var(--color-updater);
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
 }
 
 .pipeline-flow {
@@ -1245,41 +1372,41 @@ body {
     opacity: 0.25;
     filter: grayscale(30%) blur(0.3px);
     pointer-events: none;
-    transform: scale(0.97);
+    --card-scale: scale(0.97);
 }
 
 .card-repo.processing {
     border-color: var(--color-repo);
     box-shadow: 0 0 30px rgba(59, 130, 246, 0.35);
-    transform: scale(1.02);
+    --card-scale: scale(1.02);
     z-index: 5;
 }
 
 .card-core.processing {
     border-color: var(--color-core);
     box-shadow: 0 0 30px rgba(16, 185, 129, 0.35);
-    transform: scale(1.02);
+    --card-scale: scale(1.02);
     z-index: 5;
 }
 
 .card-bot.processing {
     border-color: var(--color-bot);
     box-shadow: 0 0 30px rgba(139, 92, 246, 0.35);
-    transform: scale(1.02);
+    --card-scale: scale(1.02);
     z-index: 5;
 }
 
 .card-dash.processing {
     border-color: var(--color-dash);
     box-shadow: 0 0 30px rgba(6, 182, 212, 0.35);
-    transform: scale(1.02);
+    --card-scale: scale(1.02);
     z-index: 5;
 }
 
 .card-updater.processing {
     border-color: var(--color-updater);
     box-shadow: 0 0 30px rgba(245, 158, 11, 0.35);
-    transform: scale(1.02);
+    --card-scale: scale(1.02);
     z-index: 5;
 }
 

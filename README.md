@@ -99,7 +99,14 @@ description: <when the agent should use this skill, written as a trigger conditi
 
 ## 🚀 Using These Skills
 
-**In an AOSSIE repository:** copy the skill folders you need (plus `GLOSSARY.md`) into the repository, for example under `org-wide-skills/`, and point to them from the repository's `AGENTS.md`. Re-sync when skills change here.
+> [!NOTE]
+> **Built from the [Template-Repo `skills` branch](https://github.com/AOSSIE-Org/Template-Repo/tree/skills)?** You don't need to add these skills again. That branch's `AGENTS.md` already loads every skill in this repository (and `GLOSSARY.md`) from `../skills/`, so just clone this repository next to your project:
+>
+> ```bash
+> git clone https://github.com/AOSSIE-Org/Skills.git skills
+> ```
+
+**In any other AOSSIE repository:** copy the skill folders you need (plus `GLOSSARY.md`) into the repository, for example under `org-wide-skills/`, and point to them from the repository's `AGENTS.md`. Re-sync when skills change here.
 
 **With your own agent:** clone this repository and add the skill folders to your agent's skills directory, for example `.claude/skills/` for Claude Code.
 

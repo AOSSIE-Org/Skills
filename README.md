@@ -138,6 +138,21 @@ See [AGENTS.md](./AGENTS.md) and the [Contribution Guidelines](./CONTRIBUTING.md
 
 ---
 
+## ✅ Validate skill metadata
+
+Install the validation dependency and run the same check used by CI:
+
+```bash
+python -m pip install -r requirements-validation.txt
+python scripts/validate_skills.py
+```
+
+To run the validator's unit tests locally:
+
+```bash
+python -m unittest discover -s tests -t . -v
+```
+
 ## ✨ Maintainers
 
 * [Karun Pacholi](https://github.com/kpj2006) - Lead Developer & Architect

@@ -53,6 +53,8 @@ class ValidateSkillsTests(unittest.TestCase):
 
     def test_requires_nonempty_fields_and_aossie_kebab_case_name(self):
         cases = [
+            ("---\ndescription: present\n---\n", "name"),
+            ("---\nname: aossie-example\n---\n", "description"),
             ("---\nname: ''\ndescription: null\n---\n", "name"),
             ("---\nname: aossie-ok\ndescription: ''\n---\n", "description"),
             ("---\nname: AOSSIE_bad\ndescription: fine\n---\n", "kebab-case"),
